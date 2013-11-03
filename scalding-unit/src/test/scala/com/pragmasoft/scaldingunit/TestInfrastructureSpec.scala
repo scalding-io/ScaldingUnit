@@ -6,10 +6,8 @@ import scala.Predef._
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import scala.collection.mutable.Buffer
-import com.pragmasoft.scaldingunit.TestInfrastructure
 
-
-class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfrastructure {
+class TestInfrastructureSpec extends FlatSpec with ShouldMatchers with TestInfrastructure {
 
   "A test with single source" should "accept an operation with a single input pipe" in {
     given {
