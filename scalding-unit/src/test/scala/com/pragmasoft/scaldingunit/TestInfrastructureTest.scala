@@ -9,13 +9,6 @@ import scala.collection.mutable.Buffer
 import com.pragmasoft.scaldingunit.TestInfrastructure
 
 
-/**
- * Created with IntelliJ IDEA.
- * User: gfe01
- * Date: 21/10/13
- * Time: 11:14
- * To change this template use File | Settings | File Templates.
- */
 class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfrastructure {
 
   "A test with single source" should "accept an operation with a single input pipe" in {
@@ -27,7 +20,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           col1: String => col1 + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[(String, String, String)] => {
         buffer.forall( {case (_,_,transformed) => transformed.endsWith("_transf") } ) should be(true)
       }
@@ -43,7 +36,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           col1: String => col1 + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall( tuple => tuple.getString(2).endsWith("_transf") )  should be(true)
       }
@@ -59,7 +52,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           col1: String => col1 + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall( tuple => tuple.getString(1).endsWith("_transf") )  should be(true)
       }
@@ -75,7 +68,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           col1: String => col1 + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall( tuple => tuple.getString(2).endsWith("_transf") )  should be(true)
       }
@@ -93,7 +86,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           address: String => address + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[(String, String, String, String)] => {
         println("Output " + buffer.toList)
         buffer.forall( { case (_, _, _, addressTransf ) => addressTransf.endsWith("_transf") } ) should be(true)
@@ -112,7 +105,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           address: String => address + "_transf"
         }
       }
-    } then {
+    } ensure {
       buffer : Buffer[(String, String, String, String)] => {
         println("Output " + buffer.toList)
         buffer.forall( { case (_, _, _, addressTransf ) => addressTransf.endsWith("_transf") } ) should be(true)
@@ -137,7 +130,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
         }
         .project( ('col1, 'col2, 'col1_transf) )
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
       }
@@ -164,7 +157,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
                 col1: String => col1 + "_transf"
               }
         }
-      } then {
+      } ensure {
         buffer : Buffer[Tuple] => {
           buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
         }
@@ -192,7 +185,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
             }
           .project( ('col1, 'col2, 'col1_transf) )
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
       }
@@ -215,7 +208,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
               col1: String => col1 + "_transf"
             }
         }
-      } then {
+      } ensure {
         buffer : Buffer[Tuple] => {
           buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
         }
@@ -238,7 +231,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           }
           .project( ('col1, 'col2, 'col1_transf) )
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
       }
@@ -260,7 +253,7 @@ class TestInfrastructureTest extends FlatSpec with ShouldMatchers with TestInfra
           }
           .project( ('col1, 'col2, 'col1_transf) )
       }
-    } then {
+    } ensure {
       buffer : Buffer[Tuple] => {
         buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
       }

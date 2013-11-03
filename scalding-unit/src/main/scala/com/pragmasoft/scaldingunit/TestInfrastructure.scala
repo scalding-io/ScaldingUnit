@@ -75,7 +75,7 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
   }
 
   case class TestCaseWhen(sources: List[TestSource], operation: PipeOperation) {
-    def then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) = {
+    def ensure[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) = {
       CompleteTestCase(sources, operation, assertion)
     }
   }
