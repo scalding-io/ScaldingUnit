@@ -1,3 +1,5 @@
+import AssemblyKeys._
+
 organization := "com.pragmasoft"
 
 name := "scaldingunit"
@@ -11,3 +13,7 @@ lazy val main = project.in(file("scalding-unit"))
 lazy val examples = project.in(file("examples")).dependsOn(main)
 
 lazy val root = project.in(file(".")).aggregate(main, examples)
+
+assemblySettings
+
+jarName in assembly := "scalding-unit.jar"
