@@ -11,15 +11,6 @@ import cascading.tuple.Tuple
 import com.pragmasoft.scaldingunit.sample.SampleJobPipeTransformations
 
 class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
-
-//  val INPUT_SCHEMA = List('date, 'userid, 'url)
-//  val WITH_DAY_SCHEMA = List('date, 'userid, 'url, 'day)
-//  val EVENT_COUNT_SCHEMA = List('day, 'userid, 'event_count)
-//  val OUTPUT_SCHEMA = List('date, 'userid, 'email, 'address, 'event_count)
-//
-//  val USER_DATA_SCHEMA = List('userid, 'email, 'address)
-  //"dd/MM/yyyy HH:mm:ss"
-
   "A sample job pipe transformation" should "add column with day of event" in {
     given {
       List( ("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com") ) withSchema INPUT_SCHEMA
@@ -73,6 +64,4 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
         buffer.toList shouldEqual List( ("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l) )
     }
   }
-
-
 }
