@@ -6,7 +6,7 @@ It essentially provides a test harness to support the decomposition of a Scaldin
 each one testable independently before being assembled into the main Job that will then be tested as a whole using Scalding-based
 tests.
 
-## How does it look like
+## What does it look like
 
 A test written with scalding unit look as shown below:
 
@@ -221,5 +221,23 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
 The TestInfrastructure trait is providing a BDD-like syntax to specify the Input to supply to the operation to test and
 to write the expectations on the results (unfortunately we had to remove the 'then' keyword since it is deprecated from Scala 2.10).
 
-Once the different steps have been tested throughly it is possible to combine them in the main Job and test the end to end behavior.
+Once the different steps have been tested thoroughly it is possible to combine them in the main Job and test the end to end
+behavior using the JobTest class provided by Scalding.
+
+## Content
+
+The repository contains two projects:
+
+ - scalding-unit: the main project, providing the test framework
+ - examples: a set of examples to describe the design approach described here
+
+## What's next
+
+At the moment we are covering only the Fields-based API since is the one used in most of the project we are working on.
+We are planning to start providing a similar infrastructure for the type-safe API too.
+
+## License
+
+The sw is distributed under apache license (see license document)
+
 
