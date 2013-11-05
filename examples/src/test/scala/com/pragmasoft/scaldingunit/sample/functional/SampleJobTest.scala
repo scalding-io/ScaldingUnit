@@ -17,6 +17,7 @@ class SampleJobTest extends FlatSpec with ShouldMatchers with FieldConversions w
 
   "A sample job" should "do the full transformation" in {
 
+
     JobTest(classOf[SampleJob].getName)
       .arg("eventsPath", "eventsPath")
       .arg("userInfoPath", "userInfoPath")
