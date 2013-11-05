@@ -12,7 +12,7 @@ import com.twitter.scalding.Osv
 
 class SampleJobTest extends FlatSpec with ShouldMatchers with FieldConversions with TupleConversions {
 
-  val eventData = List( ("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com") )
+  val eventData = List( ("11/02/2013 10:22:11", 1000002l, "http://www.youtube.com") )
   val userData = List( (1000002l, "stefano@email.com", "10 Downing St. London") )
 
   "A sample job" should "do the full transformation" in {
@@ -23,9 +23,9 @@ class SampleJobTest extends FlatSpec with ShouldMatchers with FieldConversions w
       .arg("outputPath", "outputPath")
       .source(Osv("eventsPath", INPUT_SCHEMA), eventData)
       .source(Osv("userInfoPath", USER_DATA_SCHEMA), userData)
-      .sink[Tuple](Tsv("outputPath", OUTPUT_SCHEMA)) {
-            buffer: mutable.Buffer[Tuple] =>
-              buffer.toList shouldEqual List( new Tuple("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l) )
+      .sink[(String, Long, String, String, Long)](Tsv("outputPath", OUTPUT_SCHEMA)) {
+            buffer =>
+              buffer.toList shouldEqual List( ("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l) )
           }
       .run
       .finish

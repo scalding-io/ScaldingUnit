@@ -54,9 +54,9 @@ import SampleJobPipeTransformations._
 
 class SampleJob(args: Args) extends Job(args) {
 
-  Osv(args("eventsPath")).read
+  Osv(args("eventsPath"), INPUT_SCHEMA).read
     .addDayColumn
     .countUserEventsPerDay
-    .addUserInfo(Osv(args("userInfoPath")).read)
-    .write(Tsv(args("outputPath")))
+    .addUserInfo(Osv(args("userInfoPath"), USER_DATA_SCHEMA).read)
+    .write(Tsv(args("outputPath"), OUTPUT_SCHEMA))
 }
