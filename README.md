@@ -27,7 +27,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
 }
 ```
 
-Where addUserInfo is a function joining two pipes to generate an enriched one.
+Where `addUserInfo` is a function joining two pipes to generate an enriched one.
 
 ## Motivation and details
 
@@ -55,7 +55,7 @@ class WordCountJob(args : Args) extends Job(args) {
 }
 ```
 
-The transformations are defined as operations on a cascading.pipe.Pipe class or on the richer wrapper com.twitter.scalding.RichPipe.
+The transformations are defined as operations on a `cascading.pipe.Pipe` class or on the richer wrapper `com.twitter.scalding.RichPipe`.
 Scalding provides a way of testing Jobs via the com.twitter.scalding.JobTest class. This class allows to specify values for the different
 Job sources and to specify assertions on the different job sinks.
 This approach works very well to do end to end test on the Job and is good enough for small jobs as the one described above
@@ -219,7 +219,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
 ```
 
 The TestInfrastructure trait is providing a BDD-like syntax to specify the Input to supply to the operation to test and
-to write the expectations on the results (unfortunately we had to remove the 'then' keyword since it is deprecated from Scala 2.10).
+to write the expectations on the results (unfortunately we had to remove the `then` keyword since it is deprecated from Scala 2.10).
 
 Once the different steps have been tested thoroughly it is possible to combine them in the main Job and test the end to end
 behavior using the JobTest class provided by Scalding.
