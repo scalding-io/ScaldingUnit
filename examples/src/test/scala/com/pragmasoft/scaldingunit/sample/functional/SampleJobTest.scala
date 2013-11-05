@@ -23,8 +23,8 @@ class SampleJobTest extends FlatSpec with ShouldMatchers with FieldConversions w
       .arg("outputPath", "outputPath")
       .source(Osv("eventsPath", INPUT_SCHEMA), eventData)
       .source(Osv("userInfoPath", USER_DATA_SCHEMA), userData)
-      .sink[(String, Long, String, String, Long)](Tsv("outputPath", OUTPUT_SCHEMA)) {
-            buffer =>
+      .sink(Tsv("outputPath", OUTPUT_SCHEMA)) {
+            buffer: mutable.Buffer[(String, Long, String, String, Long)] =>
               buffer.toList shouldEqual List( ("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l) )
           }
       .run
