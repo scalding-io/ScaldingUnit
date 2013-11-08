@@ -1,6 +1,9 @@
 language: scala
 scala:
-  - 2.10.0
+  - 2.10.2
+script:
+#  - "sbt -sbt-version 0.13.0 ++$TRAVIS_SCALA_VERSION clean test assembly"
+  - mvn test package
 jdk:
   #the scala compiler has problems with jdk7 intermittenly
   - openjdk6
