@@ -181,4 +181,23 @@
 
     </build>
 
+    <repositories>
+        <repository>
+            <id>mvn-repository</id>
+            <url>http://mvnrepository.com</url>
+        </repository>
+        <repository>
+            <id>mvn-twitter</id>
+            <url>http://maven.twttr.com</url>
+        </repository>
+        <repository>
+            <id>Concurrent Maven</id>
+            <url>http://conjars.org/repo</url>
+        </repository>
+        <repository>
+            <id>CloJars</id>
+            <url>http://clojars.org/repo/</url>
+        </repository>
+    </repositories>
+
 </project>
