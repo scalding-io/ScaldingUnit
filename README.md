@@ -235,6 +235,8 @@ The repository contains two projects:
 
 At the moment we are covering only the Fields-based API since is the one used in most of the project we are working on.
 We are planning to start providing a similar infrastructure for the type-safe API too.
+We are also planning to add support for job acceptance validation comparing sample data process against an external
+executable specification (such as a R program)
 
 ## License
 
