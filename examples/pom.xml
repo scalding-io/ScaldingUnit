@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.pragmasoft</groupId>
             <artifactId>scalding-unit</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
