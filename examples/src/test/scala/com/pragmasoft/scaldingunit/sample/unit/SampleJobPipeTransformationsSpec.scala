@@ -9,7 +9,11 @@ import com.twitter.scalding.{TupleConversions, RichPipe}
 import scala.collection.mutable
 import cascading.tuple.Tuple
 import com.pragmasoft.scaldingunit.sample.SampleJobPipeTransformations
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+
+@RunWith(classOf[JUnitRunner])
 class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
   "A sample job pipe transformation" should "add column with day of event" in {
     given {
