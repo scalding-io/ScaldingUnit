@@ -1,12 +1,14 @@
 # ScaldingUnit - TDD utils for Scalding developers
 
-[![Build Status](https://api.travis-ci.org/galarragas/ScaldingUnit.png)](http://travis-ci.org/galarragas/ScaldingUnit)
+![Scalding logo BW](./logo/scaldingBW.png "Scalding")
 
 The aim of this project is to allow user to write Scalding (https://github.com/twitter/scalding) map-reduce jobs in a more modular and test-driven way.
 It is based on the experience done in the Big Data unity at BSkyB where it originated and is currently used and maintained.
 It essentially provides a test harness to support the decomposition of a Scalding Map-Reduce Job into a series of smaller steps,
 each one testable independently before being assembled into the main Job that will then be tested as a whole using Scalding-based
 tests.
+
+[![Build Status](https://api.travis-ci.org/galarragas/ScaldingUnit.png)](http://travis-ci.org/galarragas/ScaldingUnit)
 
 ## What does it look like
 
@@ -242,6 +244,8 @@ executable specification (such as a R program)
 
 ## License
 
-The sw is distributed under apache license (see license document)
+Copyright 2013 PragmaSoft Ltd.
+
+Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 
 
