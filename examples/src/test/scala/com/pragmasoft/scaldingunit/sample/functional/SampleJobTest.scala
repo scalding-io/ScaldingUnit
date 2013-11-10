@@ -3,7 +3,7 @@ package com.pragmasoft.scaldingunit.sample.functional
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
 import com.twitter.scalding._
-import com.pragmasoft.scaldingunit.sample.SampleJob
+import com.pragmasoft.scaldingunit.sample.{schemas, SampleJob}
 import com.pragmasoft.scaldingunit.sample.SampleJobPipeTransformations._
 import scala.collection.mutable
 import com.twitter.scalding.Tsv
@@ -11,7 +11,7 @@ import com.twitter.scalding.Osv
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-
+import schemas._
 
 @RunWith(classOf[JUnitRunner])
 class SampleJobTest extends FlatSpec with ShouldMatchers with FieldConversions with TupleConversions {
