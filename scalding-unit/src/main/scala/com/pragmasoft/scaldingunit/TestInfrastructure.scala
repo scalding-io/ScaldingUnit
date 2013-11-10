@@ -13,9 +13,9 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
 
   val log = LoggerFactory.getLogger(this.getClass.getName)
 
-  def given(source: TestSource): TestCaseGiven1 = new TestCaseGiven1(source)
+  def Given(source: TestSource): TestCaseGiven1 = new TestCaseGiven1(source)
 
-  def given(sources: List[TestSource]): TestCaseGivenList = new TestCaseGivenList(sources)
+  def Given(sources: List[TestSource]): TestCaseGivenList = new TestCaseGivenList(sources)
 
   trait TestSourceWithoutSchema {
     def addSourceToJob(jobTest: JobTest, source: Source): JobTest
@@ -51,31 +51,31 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
   }
 
   case class TestCaseGiven1(source: TestSource) {
-    def and(other: TestSource) = TestCaseGiven2(source, other)
+    def And(other: TestSource) = TestCaseGiven2(source, other)
 
-    def when(op: OnePipeOperation): TestCaseWhen = TestCaseWhen(List(source), op)
+    def When(op: OnePipeOperation): TestCaseWhen = TestCaseWhen(List(source), op)
   }
 
   case class TestCaseGiven2(source: TestSource, other: TestSource) {
-    def and(third: TestSource) = TestCaseGiven3(source, other, third)
+    def And(third: TestSource) = TestCaseGiven3(source, other, third)
 
-    def when(op: TwoPipesOperation): TestCaseWhen = TestCaseWhen(List(source, other), op)
+    def When(op: TwoPipesOperation): TestCaseWhen = TestCaseWhen(List(source, other), op)
   }
 
   case class TestCaseGiven3(source: TestSource, other: TestSource, third: TestSource) {
-    def and(next: TestSource) = TestCaseGivenList(List(source, other, third, next))
+    def And(next: TestSource) = TestCaseGivenList(List(source, other, third, next))
 
-    def when(op: ThreePipesOperation): TestCaseWhen = TestCaseWhen(List(source, other, third), op)
+    def When(op: ThreePipesOperation): TestCaseWhen = TestCaseWhen(List(source, other, third), op)
   }
 
   case class TestCaseGivenList(sources: List[TestSource]) {
-    def and(next: TestSource) = TestCaseGivenList((next :: sources.reverse).reverse)
+    def And(next: TestSource) = TestCaseGivenList((next :: sources.reverse).reverse)
 
-    def when(op: PipeOperation): TestCaseWhen = TestCaseWhen(sources, op)
+    def When(op: PipeOperation): TestCaseWhen = TestCaseWhen(sources, op)
   }
 
   case class TestCaseWhen(sources: List[TestSource], operation: PipeOperation) {
-    def ensure[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) = {
+    def Then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) = {
       CompleteTestCase(sources, operation, assertion)
     }
   }

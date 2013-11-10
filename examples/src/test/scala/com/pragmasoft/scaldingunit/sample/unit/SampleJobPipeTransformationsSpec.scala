@@ -16,11 +16,11 @@ import schemas._
 @RunWith(classOf[JUnitRunner])
 class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
   "A sample job pipe transformation" should "add column with day of event" in {
-    given {
+    Given {
       List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
-    } when {
+    } When {
       pipe: RichPipe => pipe.addDayColumn
-    } ensure {
+    } Then {
       buffer: mutable.Buffer[(String, Long, String, String)] =>
         buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
     }
@@ -30,7 +30,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
     def lessThanByDateAndId(left: (String, Long, Long), right: (String, Long, Long)): Boolean =
       (left._1 < right._1) || ((left._1 == right._1) && (left._2 < left._2))
 
-    given {
+    Given {
       List(
         ("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"),
         ("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"),
@@ -41,9 +41,9 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
         ("15/02/2013 10:22:11", 1000001l, "http://www.youtube.com", "2013/02/15"),
         ("15/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/15")
       ) withSchema WITH_DAY_SCHEMA
-    } when {
+    } When {
       pipe: RichPipe => pipe.countUserEventsPerDay
-    } ensure {
+    } Then {
       buffer: mutable.Buffer[(String, Long, Long)] =>
         buffer.toList.sortWith(lessThanByDateAndId(_, _)) shouldEqual List(
           ("2013/02/11", 1000002l, 1l),
@@ -56,13 +56,13 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
   }
 
   it should "add user info" in {
-    given {
+    Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
-    } and {
+    } And {
       List((1000002l, "stefano@email.com", "10 Downing St. London")) withSchema USER_DATA_SCHEMA
-    } when {
+    } When {
       (eventCount: RichPipe, userData: RichPipe) => eventCount.addUserInfo(userData)
-    } ensure {
+    } Then {
       buffer: mutable.Buffer[(String, Long, String, String, Long)] =>
         buffer.toList shouldEqual List(("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l))
     }
