@@ -19,7 +19,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
   "A sample job pipe transformation" should "add user info" in {
     Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
-    } and {
+    } And {
       List( (1000002l, "stefano@email.com", "10 Downing St. London") ) withSchema USER_DATA_SCHEMA
     } When {
       (eventCount: RichPipe, userData: RichPipe) => eventCount.addUserInfo(userData)
