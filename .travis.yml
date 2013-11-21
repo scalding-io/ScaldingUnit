@@ -1,9 +1,11 @@
 language: scala
 scala:
-  - 2.10.2
+- 2.10.2
 script:
-#  - "sbt -sbt-version 0.13.0 ++$TRAVIS_SCALA_VERSION clean test assembly"
-  - mvn test package
+- mvn test package
+- mvn -pl scalding-unit deploy
 jdk:
-  #the scala compiler has problems with jdk7 intermittenly
-  - openjdk6
+- openjdk6
+env:
+  TOKEN:
+    secure: aAvLAj/OCPS+SW/OZLd2CtfWHeyXy8j1NRtZu5/B98iV8+z/w4pFIIicY8LIof0++i9YZribJLR6iUdgHqsGBrBE1mFWA0QeH2tzvCPewzxjXkr0f2tEC+aWnkbsGRWzRM+Wjh3RE8kmvKnq2Jy01tOvVlVSa33BFkIgNyKkGM0=
