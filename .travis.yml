@@ -7,5 +7,4 @@ script:
 jdk:
 - openjdk6
 env:
-  TOKEN:
-    secure: aAvLAj/OCPS+SW/OZLd2CtfWHeyXy8j1NRtZu5/B98iV8+z/w4pFIIicY8LIof0++i9YZribJLR6iUdgHqsGBrBE1mFWA0QeH2tzvCPewzxjXkr0f2tEC+aWnkbsGRWzRM+Wjh3RE8kmvKnq2Jy01tOvVlVSa33BFkIgNyKkGM0=
+  secure: XZMYRnZr5zIRkTPYo5TMCWmJ9GL1TvVtwIwgZG1uUgwxkTnAHlS7B+UaIyOvYAwBt0Esy29FA+d2tbv6ThLpLORY6VzqKjFaZolIfrboQ5oUJ7V5KVu/3DjjksQy2nIYrdrFo4mJITFOMw8ENgHgZeOL2WJnRE3ntAJsRWxNMrM=
