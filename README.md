@@ -33,6 +33,27 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
 
 Where `addUserInfo` is a function joining two pipes to generate an enriched one.
 
+## Usage
+
+To add the dependency on maven include:
+
+```xml
+<dependency>
+  <groupId>com.pragmasoft</groupId>
+  <artifactId>scalding-unit</artifactId>
+  <version>0.2</version>
+</dependency>
+```
+
+and repository:
+
+```xml
+<repository>
+  <id>Scalding Unit</id>
+  <url>https://github.com/galarragas/ScaldingUnit/tree/gh-pages/maven/snapshots/</url>
+</repository>
+```
+
 ## Motivation and details
 
 ## Writing and testing Scalding Jobs without ScaldingUnit
