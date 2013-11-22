@@ -1,34 +1,30 @@
 package com.pragmasoft.scaldingunit.sample.unit
 
-import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
-import com.pragmasoft.scaldingunit.TestInfrastructure
 import com.pragmasoft.scaldingunit.sample.{schemas, SampleJobPipeTransformations}
 import SampleJobPipeTransformations._
 import com.twitter.scalding.{TupleConversions, RichPipe}
 import scala.collection.mutable
-import cascading.tuple.Tuple
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import schemas._
+import org.specs2.{mutable => mutableSpec}
+import com.pragmasoft.scaldingunit.TestInfrastructure
 
 
-@RunWith(classOf[JUnitRunner])
-class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
-  "A sample job pipe transformation" should "add column with day of event" in {
+class SampleJobPipeTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with TestInfrastructure {
+
+  // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
+
+  "A sample job pipe transformation" should {
+
     Given {
       List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
     } When {
       pipe: RichPipe => pipe.addDayColumn
     } Then {
       buffer: mutable.Buffer[(String, Long, String, String)] =>
-        buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
+        "add column with day of event" in {
+          buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
+        }
     }
-  }
-
-  it should "count user events per day" in {
-    def lessThanByDateAndId(left: (String, Long, Long), right: (String, Long, Long)): Boolean =
-      (left._1 < right._1) || ((left._1 == right._1) && (left._2 < left._2))
 
     Given {
       List(
@@ -45,17 +41,22 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
       pipe: RichPipe => pipe.countUserEventsPerDay
     } Then {
       buffer: mutable.Buffer[(String, Long, Long)] =>
-        buffer.toList.sortWith(lessThanByDateAndId(_, _)) shouldEqual List(
-          ("2013/02/11", 1000002l, 1l),
-          ("2013/02/12", 1000002l, 2l),
-          ("2013/02/15", 1000001l, 2l),
-          ("2013/02/15", 1000002l, 2l),
-          ("2013/02/15", 1000003l, 1l)
-        )
-    }
-  }
+        "count user events per day" in {
+          def lessThanByDateAndId(left: (String, Long, Long), right: (String, Long, Long)): Boolean =
+            (left._1 < right._1) || ((left._1 == right._1) && (left._2 < left._2))
 
-  it should "add user info" in {
+
+          buffer.toList.sortWith(lessThanByDateAndId(_, _)) shouldEqual List(
+            ("2013/02/11", 1000002l, 1l),
+            ("2013/02/12", 1000002l, 2l),
+            ("2013/02/15", 1000001l, 2l),
+            ("2013/02/15", 1000002l, 2l),
+            ("2013/02/15", 1000003l, 1l)
+          )
+        }
+    }
+
+
     Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
     } And {
@@ -64,7 +65,10 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
       (eventCount: RichPipe, userData: RichPipe) => eventCount.addUserInfo(userData)
     } Then {
       buffer: mutable.Buffer[(String, Long, String, String, Long)] =>
-        buffer.toList shouldEqual List(("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l))
+        "add user info" in {
+          buffer.toList shouldEqual List(("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l))
+        }
     }
+
   }
 }

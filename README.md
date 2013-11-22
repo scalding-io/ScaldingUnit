@@ -15,7 +15,7 @@ tests.
 A test written with scalding unit look as shown below:
 
 ```scala
-class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
+class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with ScalaTestScaldingSupport {
   "A sample job pipe transformation" should "add user info" in {
     Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
@@ -30,6 +30,34 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
   }
 }
 ```
+
+or with Specs2
+
+```scala
+import org.specs2.{mutable => mutableSpec}
+
+class ScalaTestSpec2SupportSpec extends mutableSpec.SpecificationWithJUnit with TestInfrastructure {
+
+  // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
+
+  "A test with single source" should {
+
+    Given {
+      List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
+    } When {
+      pipe: RichPipe => {
+        pipe.map('col1 -> 'col1_transf) {
+          col1: String => col1 + "_transf"
+        }
+      }
+    } Then {
+      buffer: Buffer[(String, String, String)] =>
+        "accept an operation with a single input pipe" in { buffer.forall({ case (_, _, transformed) => transformed.endsWith("_transf")}) mustEqual (true) }
+    }
+  }
+}
+```
+
 
 Where `addUserInfo` is a function joining two pipes to generate an enriched one.
 

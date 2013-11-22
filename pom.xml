@@ -6,7 +6,7 @@
 
     <groupId>com.pragmasoft</groupId>
     <artifactId>ScaldingUnitParent</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <packaging>pom</packaging>
 
@@ -34,6 +34,7 @@
         <commons.test.version>1.0.0</commons.test.version>
         <junit.version>4.10</junit.version>
 
+        <specs2_2.10.version>2.3.4</specs2_2.10.version>
     </properties>
 
     <dependencies>
@@ -53,6 +54,11 @@
             <groupId>com.twitter</groupId>
             <artifactId>scalding-commons_${scala.scalding.version}</artifactId>
             <version>${scalding-commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2_2.10</artifactId>
+            <version>${specs2_2.10.version}</version>
         </dependency>
         <!-- Testing -->
         <dependency>
@@ -78,8 +84,8 @@
             <artifactId>jgrapht-jdk1.6</artifactId>
             <version>0.8.1</version>
         </dependency>
-
     </dependencies>
+
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -197,6 +203,17 @@
         <repository>
             <id>CloJars</id>
             <url>http://clojars.org/repo/</url>
+        </repository>
+
+        <repository>
+            <id>oss.sonatype.org</id>
+            <name>releases</name>
+            <url>http://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven repository</name>
+            <url>http://repo1.maven.org/maven2</url>
         </repository>
     </repositories>
 

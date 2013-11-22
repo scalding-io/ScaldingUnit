@@ -75,8 +75,8 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
   }
 
   case class TestCaseWhen(sources: List[TestSource], operation: PipeOperation) {
-    def Then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) = {
-      CompleteTestCase(sources, operation, assertion)
+    def Then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) : Unit = {
+      CompleteTestCase(sources, operation, assertion).run()
     }
   }
 
@@ -90,19 +90,21 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
       outputPipe.debug.write(Tsv("output"))
     }
 
-    val jobTest = JobTest(new DummyJob(_))
+    def run() : Unit = {
+      val jobTest = JobTest(new DummyJob(_))
 
-    // Add Sources
-    val op = sources.foreach {
-      _.addSourceDataToJobTest(jobTest)
-    }
-    // Add Sink
-    jobTest.sink[OutputType](Tsv("output")) {
-      assertion(_)
-    }
+      // Add Sources
+      val op = sources.foreach {
+        _.addSourceDataToJobTest(jobTest)
+      }
+      // Add Sink
+      jobTest.sink[OutputType](Tsv("output")) {
+        assertion(_)
+      }
 
-    // Execute
-    jobTest.run.finish
+      // Execute
+      jobTest.run.finish
+    }
   }
 
 }
