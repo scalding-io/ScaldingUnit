@@ -54,7 +54,9 @@ class ScalaTestSpec2SupportSpec extends mutableSpec.SpecificationWithJUnit with 
       }
     } Then {
       buffer: Buffer[(String, String, String)] =>
-        "accept an operation with a single input pipe" in { buffer.forall({ case (_, _, transformed) => transformed.endsWith("_transf")}) mustEqual (true) }
+        "accept an operation with a single input pipe" in {
+            buffer.forall({ case (_, _, transformed) => transformed.endsWith("_transf")}) mustEqual (true)
+        }
     }
   }
 }
