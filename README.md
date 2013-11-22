@@ -38,26 +38,24 @@ or with Specs2
 ```scala
 import org.specs2.{mutable => mutableSpec}
 
-class ScalaTestSpec2SupportSpec extends mutableSpec.SpecificationWithJUnit with TestInfrastructure {
+class SampleJobPipeTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with TestInfrastructure {
 
   // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
 
-  "A test with single source" should {
-
-    Given {
-      List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
+  "A sample job pipe transformation" should {
+     Given {
+      List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
+    } And {
+      List((1000002l, "stefano@email.com", "10 Downing St. London")) withSchema USER_DATA_SCHEMA
     } When {
-      pipe: RichPipe => {
-        pipe.map('col1 -> 'col1_transf) {
-          col1: String => col1 + "_transf"
-        }
-      }
+      (eventCount: RichPipe, userData: RichPipe) => eventCount.addUserInfo(userData)
     } Then {
-      buffer: Buffer[(String, String, String)] =>
-        "accept an operation with a single input pipe" in {
-            buffer.forall({ case (_, _, transformed) => transformed.endsWith("_transf")}) mustEqual (true)
+      buffer: mutable.Buffer[(String, Long, String, String, Long)] =>
+        "add user info" in {
+          buffer.toList shouldEqual List(("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l))
         }
     }
+
   }
 }
 ```
