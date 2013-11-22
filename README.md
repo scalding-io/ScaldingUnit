@@ -14,6 +14,8 @@ tests.
 
 A test written with scalding unit look as shown below:
 
+With ScalaTest
+
 ```scala
 class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with ScalaTestScaldingSupport {
   "A sample job pipe transformation" should "add user info" in {
