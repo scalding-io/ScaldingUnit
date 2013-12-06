@@ -23,7 +23,6 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
 
-        <spyglass.version>4.1.1</spyglass.version>
         <scalatest-maven-plugin.version>1.0-M2</scalatest-maven-plugin.version>
 
         <scalding-commons.version>0.2.0</scalding-commons.version>

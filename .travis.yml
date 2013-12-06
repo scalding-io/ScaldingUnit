@@ -2,8 +2,7 @@ language: scala
 scala:
 - 2.10.2
 script:
-- mvn test package
-- mvn -pl scalding-unit deploy
+- mvn clean test package
 jdk:
 - openjdk6
 env:

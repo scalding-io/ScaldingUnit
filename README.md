@@ -79,8 +79,8 @@ and repository:
 
 ```xml
 <repository>
-  <id>Scalding Unit</id>
-  <url>https://github.com/galarragas/ScaldingUnit/tree/gh-pages/maven/snapshots/</url>
+  <id>conjars.org</id>
+  <url>http://conjars.org/repo</url>
 </repository>
 ```
 
