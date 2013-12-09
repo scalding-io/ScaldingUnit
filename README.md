@@ -229,7 +229,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
   }
 
   it should "count user events per day" in {
-    def lessThanByDateAndId( left: (String, Long, Long), right: (String, Long, Long)): Boolean =
+    def sortedByDateAndIdAsc( left: (String, Long, Long), right: (String, Long, Long)): Boolean =
       (left._1 < right._1) || ((left._1 == right._1) && (left._2 < left._2))
 
     Given {
@@ -247,7 +247,7 @@ class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with
       pipe: RichPipe => pipe.countUserEventsPerDay
     } Then {
       buffer: mutable.Buffer[(String, Long, Long)] =>
-        buffer.toList.sortWith(lessThanByDateAndId(_, _)) shouldEqual List(
+        buffer.toList.sortWith(sortedByDateAndIdAsc(_, _)) shouldEqual List(
                 ("2013/02/11", 1000002l, 1l),
                 ("2013/02/12", 1000002l, 2l),
                 ("2013/02/15", 1000001l, 2l),

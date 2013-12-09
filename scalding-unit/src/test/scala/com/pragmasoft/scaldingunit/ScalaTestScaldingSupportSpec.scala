@@ -8,12 +8,13 @@ import org.scalatest.matchers.ShouldMatchers
 import scala.collection.mutable.Buffer
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import cascading.pipe.Pipe
 
 
 @RunWith(classOf[JUnitRunner])
 class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with TestInfrastructure {
 
-  "A test with single source" should "accept an operation with a single input pipe" in {
+  "A test with single source" should "accept an operation with a single input rich pipe" in {
     Given {
       List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
     } When {
@@ -31,7 +32,25 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with single source" should "work with output as Tuple" in {
+  it should "accept an operation with a single input pipe" in {
+    Given {
+      List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
+    } When {
+      pipe: Pipe => {
+        pipe.map('col1 -> 'col1_transf) {
+          col1: String => col1 + "_transf"
+        }
+      }
+    } Then {
+      buffer: Buffer[(String, String, String)] => {
+        buffer.forall({
+          case (_, _, transformed) => transformed.endsWith("_transf")
+        }) should be(true)
+      }
+    }
+  }
+
+  it should "work with output as Tuple" in {
     Given {
       List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
     } When {
@@ -47,7 +66,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with single source" should "work with input as simple type" in {
+  it should "work with input as simple type" in {
     Given {
       List("col1_1", "col1_2") withSchema ('col1)
     } When {
@@ -63,7 +82,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with single source" should "work with input as Tuple" in {
+  it should "work with input as Tuple" in {
     Given {
       List(new Tuple("col1_1", "col2_1"), new Tuple("col1_2", "col2_2")) withSchema (('col1, 'col2))
     } When {
@@ -100,7 +119,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with two sources" should "accept an operation with two input pipes using Tuples" in {
+  it should "accept an operation with two input pipes using Tuples" in {
     Given {
       List(new Tuple("Stefano", "110"), new Tuple("Rajah", "220")) withSchema('name, 'points)
     } And {
@@ -224,7 +243,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "work properly with a multi pipe function with same cardinality" in {
+  it should "work properly with a multi rich-pipe function with same cardinality" in {
     Given {
       List(
         (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
@@ -246,7 +265,29 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "work properly with a function accepting a list of pipes" in {
+  it should "work properly with a multi pipe function with same cardinality" in {
+    Given {
+      List(
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col3))
+      )
+    } When {
+      (pipe1: Pipe, pipe2: Pipe) => {
+        pipe1
+          .joinWithSmaller('col1 -> 'col1, pipe2)
+          .map('col1 -> 'col1_transf) {
+          col1: String => col1 + "_transf"
+        }
+          .project(('col1, 'col2, 'col1_transf))
+      }
+    } Then {
+      buffer: Buffer[Tuple] => {
+        buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
+      }
+    }
+  }
+
+  it should "work properly with a function accepting a list of rich pipes" in {
     Given {
       List(
         (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
@@ -254,6 +295,28 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
       )
     } When {
       (pipes: List[RichPipe]) => {
+        pipes(0)
+          .joinWithSmaller('col1 -> 'col1, pipes(1))
+          .map('col1 -> 'col1_transf) {
+          col1: String => col1 + "_transf"
+        }
+          .project(('col1, 'col2, 'col1_transf))
+      }
+    } Then {
+      buffer: Buffer[Tuple] => {
+        buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
+      }
+    }
+  }
+
+  it should "work properly with a function accepting a list of pipes" in {
+    Given {
+      List(
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col3))
+      )
+    } When {
+      (pipes: List[Pipe]) => {
         pipes(0)
           .joinWithSmaller('col1 -> 'col1, pipes(1))
           .map('col1 -> 'col1_transf) {

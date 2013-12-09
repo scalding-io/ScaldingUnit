@@ -6,7 +6,7 @@
 
     <groupId>com.pragmasoft</groupId>
     <artifactId>ScaldingUnitParent</artifactId>
-    <version>0.3</version>
+    <version>0.4</version>
 
     <packaging>pom</packaging>
 
@@ -29,7 +29,7 @@
         <scalding-core.version>0.8.11</scalding-core.version>
         <scala.scalding.version>2.10</scala.scalding.version>
         <scala.version>2.10.2</scala.version>
-        <scalatest.version>1.9.2</scalatest.version>
+        <scalatest.version>2.0</scalatest.version>
         <commons.test.version>1.0.0</commons.test.version>
         <junit.version>4.10</junit.version>
 
@@ -179,6 +179,19 @@
                         <include>**/*Spec*</include>
                     </includes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
