@@ -71,7 +71,7 @@ To add the dependency on maven include:
 <dependency>
   <groupId>com.pragmasoft</groupId>
   <artifactId>scalding-unit</artifactId>
-  <version>0.3</version>
+  <version>0.4</version>
 </dependency>
 ```
 
