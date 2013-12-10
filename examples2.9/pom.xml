@@ -1,21 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.pragmasoft</groupId>
-    <artifactId>ScaldingUnitParent</artifactId>
     <version>0.5</version>
-
-    <packaging>pom</packaging>
-
-    <name>Scalding unit parent project</name>
-
-    <modules>
-        <module>scalding-unit</module>
-        <module>examples</module>
-    </modules>
+    <artifactId>examples</artifactId>
+    <packaging>jar</packaging>
+    
+    <name>ScaldingUnit Examples</name>
 
     <properties>
 
@@ -25,48 +18,54 @@
         <scalatest-maven-plugin.version>1.0-M2</scalatest-maven-plugin.version>
 
         <scalding-commons.version>0.2.0</scalding-commons.version>
-        <scalding-core.version>0.8.11</scalding-core.version>
-        <scala.version>2.10</scala.version>
-        <scala.full.version>2.10.2</scala.full.version>
-        <scalatest.version>2.0</scalatest.version>
+        <scalding-core.version>0.8.4</scalding-core.version>
+        <scala.version>2.9</scala.version>
+        <scala.full.version>2.9.2</scala.full.version>
+        <scalatest.version>2.0.M5b</scalatest.version>
         <commons.test.version>1.0.0</commons.test.version>
         <junit.version>4.10</junit.version>
 
-        <specs2.version>2.3.4</specs2.version>
+        <specs2.version>1.12.4.1</specs2.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.nscala-time</groupId>
+            <artifactId>nscala-time_${scala.full.version}</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pragmasoft</groupId>
+            <artifactId>scalding-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Scala -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.full.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Scalding -->
         <dependency>
             <groupId>com.twitter</groupId>
-            <artifactId>scalding-core_${scala.version}</artifactId>
+            <artifactId>scalding-core_${scala.full.version}</artifactId>
             <version>${scalding-core.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
-            <artifactId>scalding-commons_${scala.version}</artifactId>
+            <artifactId>scalding-commons_${scala.full.version}</artifactId>
             <version>${scalding-commons.version}</version>
-            <scope>provided</scope>
         </dependency>
-
-        <!-- Testing -->
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_${scala.version}</artifactId>
+            <artifactId>specs2_${scala.full.version}</artifactId>
             <version>${specs2.version}</version>
-            <scope>test</scope>
         </dependency>
+        <!-- Testing -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.version}</artifactId>
+            <artifactId>scalatest_${scala.full.version}</artifactId>
             <version>${scalatest.version}</version>
             <scope>test</scope>
         </dependency>

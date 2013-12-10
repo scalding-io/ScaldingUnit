@@ -6,7 +6,7 @@
 
     <groupId>com.pragmasoft</groupId>
     <artifactId>scalding-unit</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 
     <packaging>jar</packaging>
 
@@ -43,26 +43,31 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>2.10.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>scalding-core_${scala.scalding.version}</artifactId>
             <version>0.8.11</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>scalding-commons_${scala.scalding.version}</artifactId>
             <version>0.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
             <artifactId>specs2_2.10</artifactId>
             <version>2.3.4</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>thirdparty</groupId>
             <artifactId>jgrapht-jdk1.6</artifactId>
             <version>0.8.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

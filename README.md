@@ -71,7 +71,7 @@ To add the dependency on maven include:
 <dependency>
   <groupId>com.pragmasoft</groupId>
   <artifactId>scalding-unit</artifactId>
-  <version>0.4</version>
+  <version>0.5</version>
 </dependency>
 ```
 
@@ -83,6 +83,13 @@ and repository:
   <url>http://conjars.org/repo</url>
 </repository>
 ```
+
+## Using ScaldingUnit with Different Versions of Scala
+
+ScaldingUnit is built with Scala 2.10 but has been tested with Scala 2.10 and from version 0.5 with 2.9.2.
+Refer to the example directories (examples and examples2.9) to see how to use it with ScalaTest and Specs2.
+
+The explanation below refers to Scala 2.10 code but the changes to apply to use 2.9 are minimal.
 
 ## Motivation and details
 
