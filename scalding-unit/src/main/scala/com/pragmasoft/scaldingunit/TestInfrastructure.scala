@@ -10,9 +10,6 @@ import scala.language.implicitConversions
 
 
 trait TestInfrastructure extends FieldConversions with TupleConversions with PipeOperations with PipeOperationsConversions {
-
-  val log = LoggerFactory.getLogger(this.getClass.getName)
-
   def Given(source: TestSource): TestCaseGiven1 = new TestCaseGiven1(source)
 
   def Given(sources: List[TestSource]): TestCaseGivenList = new TestCaseGivenList(sources)
@@ -29,8 +26,6 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
   }
 
   class SimpleTypeTestSourceWithoutSchema[T](val data: Iterable[T])(implicit setter: TupleSetter[T]) extends TestSourceWithoutSchema {
-    println("Setter " + setter.getClass.getName)
-
     def addSourceToJob(jobTest: JobTest, source: Source): JobTest =
       jobTest.source[T](source, data)(setter)
   }
@@ -85,9 +80,9 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
     class DummyJob(args: Args) extends Job(args) {
       val inputPipes: List[RichPipe] = sources.map(testSource => RichPipe(testSource.asSource.read))
 
-      val outputPipe = operation(inputPipes)
+      val outputPipe = RichPipe(operation(inputPipes))
 
-      outputPipe.debug.write(Tsv("output"))
+      outputPipe.write(Tsv("output"))
     }
 
     def run() : Unit = {

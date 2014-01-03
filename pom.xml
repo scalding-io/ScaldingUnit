@@ -6,7 +6,7 @@
 
     <groupId>com.pragmasoft</groupId>
     <artifactId>ScaldingUnitParent</artifactId>
-    <version>0.5</version>
+    <version>0.5-scalding0.9</version>
 
     <packaging>pom</packaging>
 
@@ -24,8 +24,8 @@
 
         <scalatest-maven-plugin.version>1.0-M2</scalatest-maven-plugin.version>
 
-        <scalding-commons.version>0.2.0</scalding-commons.version>
-        <scalding-core.version>0.8.11</scalding-core.version>
+        <scalding-commons.version>0.9.0rc4</scalding-commons.version>
+        <scalding-core.version>0.9.0rc4</scalding-core.version>
         <scala.version>2.10</scala.version>
         <scala.full.version>2.10.2</scala.full.version>
         <scalatest.version>2.0</scalatest.version>

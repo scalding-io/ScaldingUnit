@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.pragmasoft</groupId>
         <artifactId>ScaldingUnitParent</artifactId>
-        <version>0.5</version>
+        <version>0.5-scalding0.9</version>
     </parent>
 
     <artifactId>scalding-unit</artifactId>
