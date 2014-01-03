@@ -84,6 +84,17 @@ and repository:
 </repository>
 ```
 
+The code is not currently working correctly if you are using Scalding 0.9.rc4.
+The code supporting the 0.9 version is currently in a branch until 0.9 will be GA. To use it include the following dependency:
+
+```xml
+<dependency>
+  <groupId>com.pragmasoft</groupId>
+  <artifactId>scalding-unit</artifactId>
+  <version>0.5-scalding0.9</version>
+</dependency>
+```
+
 ## Using ScaldingUnit with Different Versions of Scala
 
 ScaldingUnit is built with Scala 2.10 but has been tested with Scala 2.10 and from version 0.5 with 2.9.2.
