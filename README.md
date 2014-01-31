@@ -2,6 +2,14 @@
 
 ![Scalding logo BW](./logo/scaldingBW.png "Scalding")
 
+## NOTE: ScaldingUnit merged into Scalding
+
+ScaldingUnit has been merged with some small changes (mostly the name of the class to extend has been renamed from TestInfrastructure to BddDsl)
+into scalding-core development branch in date 30th Jan 2014.
+Current project will be kept active to be used for version of scalding not including it.
+
+## AIM
+
 The aim of this project is to allow user to write Scalding (https://github.com/twitter/scalding) map-reduce jobs in a more modular and test-driven way.
 It is based on the experience done in the Big Data unity at BSkyB where it originated and is currently used and maintained.
 It essentially provides a test harness to support the decomposition of a Scalding Map-Reduce Job into a series of smaller steps,
@@ -17,7 +25,7 @@ A test written with scalding unit look as shown below:
 With ScalaTest
 
 ```scala
-class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with ScalaTestScaldingSupport {
+class SampleJobPipeTransformationsSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
   "A sample job pipe transformation" should "add user info" in {
     Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
