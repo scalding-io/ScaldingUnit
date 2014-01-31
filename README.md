@@ -79,7 +79,7 @@ To add the dependency on maven include:
 <dependency>
   <groupId>com.pragmasoft</groupId>
   <artifactId>scalding-unit</artifactId>
-  <version>0.5</version>
+  <version>0.6</version>
 </dependency>
 ```
 
@@ -102,6 +102,8 @@ The code supporting the 0.9 version is currently in a branch until 0.9 will be G
   <version>0.5-scalding0.9</version>
 </dependency>
 ```
+
+Support for 0.9.rc4 hasn't been updated to version 0.6 yet.
 
 ## Using ScaldingUnit with Different Versions of Scala
 
