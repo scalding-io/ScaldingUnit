@@ -316,7 +316,7 @@ executed locally as before. Using the trait `HadoopTestInfrastructure` will run 
 If you want to execute selected test on Hadoop or to decide checking some configuration or execution parameter you can
 mix with the `MultiTestModeTestInfrastructure` and define the test mode in the test method or in the test class as follows:
 
-```(scala)
+```scala
 class SampleJobPipeConfigurableRunModeTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with MultiTestModeTestInfrastructure {
 
   // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
