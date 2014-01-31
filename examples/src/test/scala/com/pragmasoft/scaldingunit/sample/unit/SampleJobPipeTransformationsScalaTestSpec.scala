@@ -13,10 +13,11 @@ import com.pragmasoft.scaldingunit.TestInfrastructure
 import org.scalautils.Explicitly._
 import org.scalautils.Uniformity
 import org.scalatest.matchers._
-
+import com.twitter.scalding.Dsl._
 
 @RunWith(classOf[JUnitRunner])
 class SampleJobPipeTransformationsScalaTestSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
+
   "A sample job pipe transformation" should "add column with day of event" in {
     Given {
       List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
@@ -28,12 +29,12 @@ class SampleJobPipeTransformationsScalaTestSpec extends FlatSpec with ShouldMatc
     }
   }
 
-  val sortedByDateAndIdAsc = new Uniformity[List[(String, Long, Long)]] {
-    def normalized(list: List[(String, Long, Long)]) =
+  val sortedByDateAndIdAsc = new Uniformity[Seq[(String, Long, Long)]] {
+    def normalized(list: Seq[(String, Long, Long)]) =
       list.sortWith { (left, right) => (left._1 < right._1) || ((left._1 == right._1) && (left._2 < left._2)) }
 
     def normalizedOrSame(b: Any): Any = b match {
-      case list: List[(String, Long, Long)] => normalized(list)
+      case list: Seq[(String, Long, Long)] => normalized(list)
       case _ => b
     }
 
@@ -67,6 +68,19 @@ class SampleJobPipeTransformationsScalaTestSpec extends FlatSpec with ShouldMatc
   }
 
   it should "add user info" in {
+    Given {
+      List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
+    } And {
+      List((1000002l, "stefano@email.com", "10 Downing St. London")) withSchema USER_DATA_SCHEMA
+    } When {
+      (eventCount: RichPipe, userData: RichPipe) => eventCount.addUserInfo(userData)
+    } Then {
+      buffer: mutable.Buffer[(String, Long, String, String, Long)] =>
+        buffer.toList should equal (List(("2013/02/11", 1000002l, "stefano@email.com", "10 Downing St. London", 1l)))
+    }
+  }
+
+  it should "add user info in hadoop mode" in {
     Given {
       List(("2013/02/11", 1000002l, 1l)) withSchema EVENT_COUNT_SCHEMA
     } And {

@@ -1,7 +1,6 @@
 package com.pragmasoft.scaldingunit.sample
 
 import cascading.pipe.Pipe
-import com.pragmasoft.scaldingunit.PipeOperations
 import com.twitter.scalding._
 import com.github.nscala_time.time.Imports._
 import com.twitter.scalding.Osv
@@ -17,8 +16,9 @@ package object schemas {
   val USER_DATA_SCHEMA = List('userid, 'email, 'address)
 }
 
-trait SampleJobPipeTransformations extends PipeOperations {
+trait SampleJobPipeTransformations {
   import schemas._
+  import Dsl._
 
   val INPUT_DATE_PATTERN: String = "dd/MM/yyyy HH:mm:ss"
 

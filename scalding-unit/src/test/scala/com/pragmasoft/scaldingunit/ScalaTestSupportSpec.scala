@@ -3,16 +3,16 @@ package com.pragmasoft.scaldingunit
 import com.twitter.scalding._
 import cascading.tuple.Tuple
 import scala.Predef._
-import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, FlatSpec}
 import scala.collection.mutable.Buffer
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import cascading.pipe.Pipe
-
+import Dsl._
 
 @RunWith(classOf[JUnitRunner])
-class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with TestInfrastructure {
+class ScalaTestSupportSpec extends FlatSpec with Matchers with TestInfrastructure {
+
 
   "A test with single source" should "accept an operation with a single input rich pipe" in {
     Given {
@@ -98,7 +98,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with two sources" should "accept an operation with two input pipes" in {
+  "A test with two sources" should "accept an operation with two input richPipes" in {
     Given {
       List(("Stefano", "110"), ("Rajah", "220")) withSchema('name, 'points)
     } And {
@@ -119,7 +119,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "accept an operation with two input pipes using Tuples" in {
+  it should "accept an operation with two input richPipes using Tuples" in {
     Given {
       List(new Tuple("Stefano", "110"), new Tuple("Rajah", "220")) withSchema('name, 'points)
     } And {
@@ -140,7 +140,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with three sources" should "accept an operation with three input pipes" in {
+  "A test with three sources" should "accept an operation with three input richPipes" in {
     Given {
       List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)
     } And {
@@ -164,7 +164,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  "A test with four sources" should "compile mixing an operation with inconsistent number of input pipes but fail at runtime" in {
+  "A test with four sources" should "compile mixing an operation with inconsistent number of input richPipes but fail at runtime" in {
     intercept[IllegalArgumentException] {
       Given {
         List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)
@@ -192,7 +192,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "be used with a function accepting a list of sources because there is no implicit for functions with more than three input pipes" in {
+  it should "be used with a function accepting a list of sources because there is no implicit for functions with more than three input richPipes" in {
     Given {
       List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)
     } And {
@@ -287,7 +287,7 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "work properly with a function accepting a list of rich pipes" in {
+  it should "work properly with a function accepting a list of rich richPipes" in {
     Given {
       List(
         (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
@@ -309,7 +309,29 @@ class ScalaTestScaldingSupportSpec extends FlatSpec with ShouldMatchers with Tes
     }
   }
 
-  it should "work properly with a function accepting a list of pipes" in {
+  it should "work properly with a function accepting a list of richPipes" in {
+    Given {
+      List(
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),
+        (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col3))
+      )
+    } When {
+      (pipes: List[Pipe]) => {
+        pipes(0)
+          .joinWithSmaller('col1 -> 'col1, pipes(1))
+          .map('col1 -> 'col1_transf) {
+          col1: String => col1 + "_transf"
+        }
+          .project(('col1, 'col2, 'col1_transf))
+      }
+    } Then {
+      buffer: Buffer[Tuple] => {
+        buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
+      }
+    }
+  }
+
+  it should "support specification of onHadoop mode" in {
     Given {
       List(
         (List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema('col1, 'col2)),

@@ -7,9 +7,9 @@ import scala.Predef._
 import com.twitter.scalding.Tsv
 import org.slf4j.LoggerFactory
 import scala.language.implicitConversions
+import com.pragmasoft.scaldingunit.testmode._
 
-
-trait TestInfrastructure extends FieldConversions with TupleConversions with PipeOperations with PipeOperationsConversions {
+abstract trait BaseTestInfrastructure extends FieldConversions with TupleConversions with PipeOperationsConversions {
 
   val log = LoggerFactory.getLogger(this.getClass.getName)
 
@@ -74,37 +74,59 @@ trait TestInfrastructure extends FieldConversions with TupleConversions with Pip
     def When(op: PipeOperation): TestCaseWhen = TestCaseWhen(sources, op)
   }
 
+
   case class TestCaseWhen(sources: List[TestSource], operation: PipeOperation) {
-    def Then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) : Unit = {
-      CompleteTestCase(sources, operation, assertion).run()
+    def Then[OutputType](assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType], testRunMode : TestRunMode, spy: Option[JobTestSpy]) : Unit = {
+      new CompleteTestCase(sources, operation, assertion, testRunMode, spy).run()
     }
   }
 
-  case class CompleteTestCase[OutputType](sources: List[TestSource], operation: PipeOperation, assertion: Buffer[OutputType] => Unit)(implicit conv: TupleConverter[OutputType]) {
+  class CompleteTestCase[OutputType](sources: List[TestSource], operation: PipeOperation, assertion: Buffer[OutputType] => Unit,
+        jobRunMode: TestRunMode, jobSpy : => Option[JobTestSpy] )(implicit conv: TupleConverter[OutputType]) {
 
     class DummyJob(args: Args) extends Job(args) {
-      val inputPipes: List[RichPipe] = sources.map(testSource => RichPipe(testSource.asSource.read))
+      val inputPipes: Seq[RichPipe] = sources map { testSource : TestSource => RichPipe(testSource.asSource.read) }
 
       val outputPipe = operation(inputPipes)
 
-      outputPipe.debug.write(Tsv("output"))
+      outputPipe.write(Tsv("output"))
     }
 
     def run() : Unit = {
       val jobTest = JobTest(new DummyJob(_))
 
+      val job = jobSpy match {
+        case None => jobTest
+        case Some(spy) =>
+          spy.setDelegate(jobTest)
+          spy
+      }
+
       // Add Sources
       val op = sources.foreach {
-        _.addSourceDataToJobTest(jobTest)
+        _.addSourceDataToJobTest(job)
       }
       // Add Sink
-      jobTest.sink[OutputType](Tsv("output")) {
+      job.sink[OutputType](Tsv("output")) {
         assertion(_)
       }
 
       // Execute
-      jobTest.run.finish
+      jobRunMode.runJobTest(job).finish
     }
   }
 
 }
+
+trait MultiTestModeTestInfrastructure extends BaseTestInfrastructure {
+  /**
+   * THis is only used to unit test the test infrastructure itself
+   */
+  implicit val __jobTestSpy : Option[JobTestSpy] = None
+}
+
+trait TestInfrastructure extends BaseTestInfrastructure with WithLocalTest
+
+trait HadoopTestInfrastrucuture extends BaseTestInfrastructure with WithHadoopTest
+
+trait HadoopTestInfrastrucutureWithSpy extends BaseTestInfrastructure with WithHadoopTestSpyingJobExecution

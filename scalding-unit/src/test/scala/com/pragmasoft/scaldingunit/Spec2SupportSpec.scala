@@ -4,8 +4,9 @@ import com.twitter.scalding._
 import scala.Predef._
 import scala.collection.mutable.Buffer
 import org.specs2.{mutable => mutableSpec}
+import Dsl._
 
-class ScalaTestSpec2SupportSpec extends mutableSpec.SpecificationWithJUnit with TestInfrastructure {
+class Spec2SupportSpec extends mutableSpec.SpecificationWithJUnit with TestInfrastructure {
 
   // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
 

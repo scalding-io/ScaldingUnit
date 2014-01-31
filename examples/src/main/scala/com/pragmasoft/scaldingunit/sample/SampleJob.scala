@@ -1,7 +1,6 @@
 package com.pragmasoft.scaldingunit.sample
 
 import cascading.pipe.Pipe
-import com.pragmasoft.scaldingunit.PipeOperations
 import com.twitter.scalding._
 import com.github.nscala_time.time.Imports._
 import com.twitter.scalding.Osv
@@ -18,18 +17,20 @@ package object schemas {
   val USER_DATA_SCHEMA = List('userid, 'email, 'address)
 }
 
-trait SampleJobPipeTransformations extends PipeOperations {
+trait SampleJobPipeTransformations {
   import schemas._
+  import Dsl._
 
   val INPUT_DATE_PATTERN: String = "dd/MM/yyyy HH:mm:ss"
 
+  def self: RichPipe
 
   /**
    * Input schema: INPUT_SCHEMA
    * Output schema: WITH_DAY_SCHEMA
    * @return
    */
-  def addDayColumn(self: Pipe) : Pipe = self.map('date -> 'day) {
+  def addDayColumn : Pipe = self.map('date -> 'day) {
     date: String => DateTimeFormat.forPattern(INPUT_DATE_PATTERN).parseDateTime(date).toString("yyyy/MM/dd");
   }
 
@@ -38,7 +39,7 @@ trait SampleJobPipeTransformations extends PipeOperations {
    * Output schema: EVENT_COUNT_SCHEMA
    * @return
    */
-  def countUserEventsPerDay(self: Pipe) : Pipe = self.groupBy(('day, 'userid)) { _.size('event_count) }
+  def countUserEventsPerDay : Pipe = self.groupBy(('day, 'userid)) { _.size('event_count) }
 
   /**
    * Joins with userData to add email and address
@@ -47,16 +48,12 @@ trait SampleJobPipeTransformations extends PipeOperations {
    * User data schema: USER_DATA_SCHEMA
    * Output schema: OUTPUT_SCHEMA
    */
-  def addUserInfo(self: Pipe, userData: Pipe) : Pipe = self.joinWithLarger('userid -> 'userid, userData).project(OUTPUT_SCHEMA)
+  def addUserInfo(userData: Pipe) : Pipe = self.joinWithLarger('userid -> 'userid, userData).project(OUTPUT_SCHEMA)
 }
 
 object SampleJobPipeTransformations  {
   implicit def wrapPipe(pipe: Pipe): SampleJobPipeTransformationsWrapper = new SampleJobPipeTransformationsWrapper(new RichPipe(pipe))
-  implicit class SampleJobPipeTransformationsWrapper(val self: RichPipe) extends SampleJobPipeTransformations {
-    def addDayColumn : Pipe = addDayColumn(self)
-    def countUserEventsPerDay : Pipe = countUserEventsPerDay(self)
-    def addUserInfo(userData: Pipe) : Pipe = addUserInfo(self, userData)
-  }
+  implicit class SampleJobPipeTransformationsWrapper(val self: RichPipe) extends SampleJobPipeTransformations with Serializable
 }
 
 import SampleJobPipeTransformations._

@@ -8,7 +8,7 @@ ScaldingUnit has been merged with some small changes (mostly the name of the cla
 into scalding-core development branch in date 30th Jan 2014.
 Current project will be kept active to be used for version of scalding not including it.
 
-## AIM
+## Aim
 
 The aim of this project is to allow user to write Scalding (https://github.com/twitter/scalding) map-reduce jobs in a more modular and test-driven way.
 It is based on the experience done in the Big Data unity at BSkyB where it originated and is currently used and maintained.
@@ -69,7 +69,7 @@ class SampleJobPipeTransformationsSpec2Spec extends mutableSpec.SpecificationWit
 ```
 
 
-Where `addUserInfo` is a function joining two pipes to generate an enriched one.
+Where `addUserInfo` is a function joining two richPipes to generate an enriched one.
 
 ## Usage
 
@@ -142,7 +142,7 @@ Job sources and to specify assertions on the different job sinks.
 This approach works very well to do end to end test on the Job and is good enough for small jobs as the one described above
 but doesn't encourage modularisation when writing more complex Jobs. That's the reason we started working on ScaldingUnit.
 
-## Checking your pipes, modular unit test of your Scalding Job
+## Checking your Pipes, modular unit test of your Scalding Job
 
 When the Job logic become more complex it is very helpful to decompose its work in simpler functions to be tested independently before being
 aggregated into the Job.
@@ -232,7 +232,7 @@ package object SampleJobPipeTransformations  {
 }
 ```
 
-The main Job class is responsible of essentially dealing with the configuration, opening the input and output pipes and
+The main Job class is responsible of essentially dealing with the configuration, opening the input and output richPipes and
 combining those macro operations. Using implicit transformations and value classes as shown above is possible to use those
 operations as if they were part of the RichPipe class.
 
@@ -305,6 +305,74 @@ the `then` keyword since it is deprecated from Scala 2.10).
 
 Once the different steps have been tested thoroughly it is possible to combine them in the main Job and test the end to end
 behavior using the JobTest class provided by Scalding.
+
+## Testing in Local and Hadoop Mode
+
+Until version 0.5 all tests were executed in Local mode. From version 0.6 is possible to decide if testing in local or
+in Hadoop mode (the runHadoop method in JobTest).
+
+Check the sample code for details but, in summary, mixing-in with the `TestInfrastructure` trait will cause the test to be
+executed locally as before. Using the trait `HadoopTestInfrastructure` will run the test on Hadoop.
+If you want to execute selected test on Hadoop or to decide checking some configuration or execution parameter you can
+mix with the `MultiTestModeTestInfrastructure` and define the test mode in the test method or in the test class as follows:
+
+```(scala)
+class SampleJobPipeConfigurableRunModeTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with MultiTestModeTestInfrastructure {
+
+  // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
+
+  import TestRunMode._
+
+  "You can run on hadoop" should {
+
+    implicit val _ = testOnHadoop
+
+    Given {
+      List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
+    } When {
+      pipe: RichPipe => pipe.addDayColumn
+    } Then {
+      buffer: mutable.Buffer[(String, Long, String, String)] =>
+        "add column with day of event" in {
+          buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
+        }
+    }
+  }
+
+  "You can run locally" should {
+
+    implicit val _ = testLocally
+
+    Given {
+      List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
+    } When {
+      pipe: RichPipe => pipe.addDayColumn
+    } Then {
+      buffer: mutable.Buffer[(String, Long, String, String)] =>
+        "add column with day of event" in {
+          buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
+        }
+    }
+  }
+
+  "You can run decide using some configuration parameter or randomly" should {
+
+    implicit val _ = if( (System.currentTimeMillis % 2) == 0) testLocally else testOnHadoop
+
+    Given {
+      List(("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com")) withSchema INPUT_SCHEMA
+    } When {
+      pipe: RichPipe => pipe.addDayColumn
+    } Then {
+      buffer: mutable.Buffer[(String, Long, String, String)] =>
+        "add column with day of event" in {
+          buffer.toList(0) shouldEqual (("12/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/12"))
+        }
+    }
+  }
+}
+
+```
 
 ## Content
 
