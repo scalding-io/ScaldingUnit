@@ -6,10 +6,10 @@ import com.twitter.scalding.{TupleConversions, RichPipe}
 import scala.collection.mutable
 import schemas._
 import org.specs2.{mutable => mutableSpec}
-import com.pragmasoft.scaldingunit.{HadoopTestInfrastrucuture, TestInfrastructure}
+import com.pragmasoft.scaldingunit.{HadoopTestInfrastructure, TestInfrastructure}
 import com.twitter.scalding.Dsl._
 
-class SampleJobPipeHadoopTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with HadoopTestInfrastrucuture {
+class SampleJobPipeHadoopTransformationsSpec2Spec extends mutableSpec.SpecificationWithJUnit with TupleConversions with HadoopTestInfrastructure {
 
   // See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions
 

@@ -127,6 +127,6 @@ trait MultiTestModeTestInfrastructure extends BaseTestInfrastructure {
 
 trait TestInfrastructure extends BaseTestInfrastructure with WithLocalTest
 
-trait HadoopTestInfrastrucuture extends BaseTestInfrastructure with WithHadoopTest
+trait HadoopTestInfrastructure extends BaseTestInfrastructure with WithHadoopTest
 
-trait HadoopTestInfrastrucutureWithSpy extends BaseTestInfrastructure with WithHadoopTestSpyingJobExecution
+trait HadoopTestInfrastructureWithSpy extends BaseTestInfrastructure with WithHadoopTestSpyingJobExecution

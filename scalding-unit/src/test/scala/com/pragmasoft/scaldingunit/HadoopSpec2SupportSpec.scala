@@ -28,7 +28,7 @@ class HadoopSpec2SupportSpec extends mutableSpec.SpecificationWithJUnit with Tup
   // Can only do one test. If I try to execute the test inside an instance of HadoopTestInfrastrucutureWithSpy I have
   // serialization issues
   "A test with single source" should {
-    new HadoopTestInfrastrucutureWithSpy {
+    new HadoopTestInfrastructureWithSpy {
         Given {
           List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
         } When {

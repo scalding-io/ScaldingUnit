@@ -6,7 +6,7 @@ import com.twitter.scalding.{TupleConversions, RichPipe}
 import scala.collection.mutable
 import schemas._
 import org.specs2.{mutable => mutableSpec}
-import com.pragmasoft.scaldingunit.{MultiTestModeTestInfrastructure, HadoopTestInfrastrucuture}
+import com.pragmasoft.scaldingunit.{MultiTestModeTestInfrastructure, HadoopTestInfrastructure}
 import com.twitter.scalding.Dsl._
 import com.pragmasoft.scaldingunit.testmode.TestRunMode
 

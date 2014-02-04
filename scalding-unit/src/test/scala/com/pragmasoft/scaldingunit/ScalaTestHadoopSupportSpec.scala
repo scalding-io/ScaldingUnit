@@ -33,7 +33,7 @@ object ScalaTestHadoopSupportSpecOperations {
 class ScalaTestHadoopSupportSpec extends FlatSpec with Matchers {
   import ScalaTestHadoopSupportSpecOperations._
 
-  "A test with single source" should "accept an operation with a single input rich pipe" in new HadoopTestInfrastrucutureWithSpy {
+  "A test with single source" should "accept an operation with a single input rich pipe" in new HadoopTestInfrastructureWithSpy {
     Given {
       List(("col1_1", "col2_1"), ("col1_2", "col2_2")) withSchema (('col1, 'col2))
     } When {
@@ -50,7 +50,7 @@ class ScalaTestHadoopSupportSpec extends FlatSpec with Matchers {
   }
 
 
-  "A test with two sources" should "accept an operation with two input richPipes" in new HadoopTestInfrastrucutureWithSpy {
+  "A test with two sources" should "accept an operation with two input richPipes" in new HadoopTestInfrastructureWithSpy {
     Given {
       List(("Stefano", "110"), ("Rajah", "220")) withSchema('name, 'points)
     } And {
