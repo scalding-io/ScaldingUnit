@@ -14,6 +14,7 @@ import org.scalautils.Explicitly._
 import org.scalautils.Uniformity
 import org.scalatest.matchers._
 import com.twitter.scalding.Dsl._
+import cascading.pipe.Pipe
 
 @RunWith(classOf[JUnitRunner])
 class SampleJobPipeTransformationsScalaTestSpec extends FlatSpec with ShouldMatchers with TupleConversions with TestInfrastructure {
@@ -54,7 +55,7 @@ class SampleJobPipeTransformationsScalaTestSpec extends FlatSpec with ShouldMatc
         ("15/02/2013 10:22:11", 1000002l, "http://www.youtube.com", "2013/02/15")
       ) withSchema WITH_DAY_SCHEMA
     } When {
-      pipe: RichPipe => pipe.countUserEventsPerDay
+      pipe: Pipe => pipe.countUserEventsPerDay
     } Then {
       buffer: mutable.Buffer[(String, Long, Long)] =>
         buffer.toList should equal (List(

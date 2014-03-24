@@ -28,7 +28,7 @@
         <scalding-core.version>0.8.11</scalding-core.version>
         <scala.version>2.10</scala.version>
         <scala.full.version>2.10.2</scala.full.version>
-        <scalatest.version>2.0</scalatest.version>
+        <scalatest.version>2.1.0</scalatest.version>
         <commons.test.version>1.0.0</commons.test.version>
         <junit.version>4.10</junit.version>
 

@@ -23,7 +23,7 @@ trait SampleJobPipeTransformations {
 
   val INPUT_DATE_PATTERN: String = "dd/MM/yyyy HH:mm:ss"
 
-  def self: RichPipe
+  def self: Pipe
 
   /**
    * Input schema: INPUT_SCHEMA
@@ -52,8 +52,8 @@ trait SampleJobPipeTransformations {
 }
 
 object SampleJobPipeTransformations  {
-  implicit def wrapPipe(pipe: Pipe): SampleJobPipeTransformationsWrapper = new SampleJobPipeTransformationsWrapper(new RichPipe(pipe))
-  implicit class SampleJobPipeTransformationsWrapper(val self: RichPipe) extends SampleJobPipeTransformations with Serializable
+  implicit def wrapRicpPipe(rp: RichPipe): SampleJobPipeTransformationsWrapper = new SampleJobPipeTransformationsWrapper(rp.pipe)
+  implicit class SampleJobPipeTransformationsWrapper(val self: Pipe) extends SampleJobPipeTransformations with Serializable
 }
 
 import SampleJobPipeTransformations._

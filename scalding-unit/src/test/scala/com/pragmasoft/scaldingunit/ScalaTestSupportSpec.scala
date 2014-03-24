@@ -353,23 +353,23 @@ class ScalaTestSupportSpec extends FlatSpec with Matchers with TestInfrastructur
     }
   }
 
-  //  it should "THIS DOESN'T EVEN COMPILE" in {
-  //    given {
-  //      List(new Tuple("col1_1", "col2_1"), new Tuple("col1_2", "col2_2")) withSchema ('col1, 'col2)
-  //    } and {
-  //      List(new Tuple("col1_1", "col2_1"), new Tuple("col1_2", "col2_2")) withSchema ('col1, 'col2)
-  //    } when {
-  //      pipe1: RichPipe => {
-  //        pipe1.map('col1 -> 'col1_transf) {
-  //          col1: String => col1 + "_transf"
-  //        }
-  //      }
-  //    } then {
-  //      buffer => {
-  //        Console.println("Result: " + buffer.toSeq)
-  //        buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
-  //      }
-  //    }
-  //  }
+    it should "not compile if the number of sources is not the same of the test function in When" in {
+      """Given {
+        List(new Tuple("col1_1", "col2_1"), new Tuple("col1_2", "col2_2")) withSchema ('col1, 'col2)
+      } And {
+        List(new Tuple("col1_1", "col2_1"), new Tuple("col1_2", "col2_2")) withSchema ('col1, 'col2)
+      } When {
+        pipe1: RichPipe => {
+          pipe1.map('col1 -> 'col1_transf) {
+            col1: String => col1 + "_transf"
+          }
+        }
+      } Then {
+        buffer: Buffer[Tuple]  => {
+          Console.println("Result: " + buffer.toSeq)
+          buffer.forall(tuple => tuple.getString(2).endsWith("_transf")) should be(true)
+        }
+      }""" shouldNot compile
+    }
 
 }
