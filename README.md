@@ -6,7 +6,8 @@
 
 ScaldingUnit has been merged with some small changes (mostly the name of the class to extend has been renamed from TestInfrastructure to BddDsl)
 into scalding-core development branch in date 30th Jan 2014.
-Current project will be kept active to be used for version of scalding not including it.
+Current project will be kept active to be used for version of scalding prior to 0.9.
+ScaldingUnit is also not working with Scalding 0.9.1 so please switch to using the BddDsl trait instead of the TestInfrastructure for project using Scalding version > 0.9
 
 ## Aim
 
