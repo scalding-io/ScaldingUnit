@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>ScaldingUnit by scalding-io</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>ScaldingUnit</h1>
+          <h2>TDD utils for Scalding developers </h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/scalding-io/ScaldingUnit/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/scalding-io/ScaldingUnit/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/scalding-io/ScaldingUnit" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="scaldingunit---tdd-utils-for-scalding-developers" class="anchor" href="#scaldingunit---tdd-utils-for-scalding-developers"><span class="octicon octicon-link"></span></a>ScaldingUnit - TDD utils for Scalding developers</h1>
+
+<p><img src="https://github.com/scalding-io/ScaldingUnit/raw/master/logo/scaldingBW.png" alt="Scalding logo BW" title="Scalding"></p>
+
+<h2>
+<a name="note-scaldingunit-merged-into-scalding" class="anchor" href="#note-scaldingunit-merged-into-scalding"><span class="octicon octicon-link"></span></a>NOTE: ScaldingUnit merged into Scalding</h2>
+
+<p>ScaldingUnit has been merged with some small changes (mostly the name of the class to extend has been renamed from TestInfrastructure to BddDsl)
+into scalding-core development branch in date 30th Jan 2014.
+Current project will be kept active to be used for version of scalding prior to 0.9.
+ScaldingUnit is also not working with Scalding 0.9.1 so please switch to using the BddDsl trait instead of the TestInfrastructure for project using Scalding version &gt; 0.9</p>
+
+<h2>
+<a name="aim" class="anchor" href="#aim"><span class="octicon octicon-link"></span></a>Aim</h2>
+
+<p>The aim of this project is to allow user to write Scalding (<a href="https://github.com/twitter/scalding">https://github.com/twitter/scalding</a>) map-reduce jobs in a more modular and test-driven way.
+It is based on the experience done in the Big Data unity at BSkyB where it originated and is currently used and maintained.
+It essentially provides a test harness to support the decomposition of a Scalding Map-Reduce Job into a series of smaller steps,
+each one testable independently before being assembled into the main Job that will then be tested as a whole using Scalding-based
+tests.</p>
+
+<p><a href="http://travis-ci.org/galarragas/ScaldingUnit"><img src="https://api.travis-ci.org/galarragas/ScaldingUnit.png" alt="Build Status"></a></p>
+
+<h2>
+<a name="what-does-it-look-like" class="anchor" href="#what-does-it-look-like"><span class="octicon octicon-link"></span></a>What does it look like</h2>
+
+<p>A test written with scalding unit look as shown below:</p>
+
+<p>With ScalaTest</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">class</span> <span class="nc">SampleJobPipeTransformationsSpec</span> <span class="k">extends</span> <span class="nc">FlatSpec</span> <span class="k">with</span> <span class="nc">ShouldMatchers</span> <span class="k">with</span> <span class="nc">TupleConversions</span> <span class="k">with</span> <span class="nc">TestInfrastructure</span> <span class="o">{</span>
+  <span class="s">"A sample job pipe transformation"</span> <span class="n">should</span> <span class="s">"add user info"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">EVENT_COUNT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">And</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">(</span> <span class="o">(</span><span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">)</span> <span class="o">)</span> <span class="n">withSchema</span> <span class="nc">USER_DATA_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="o">(</span><span class="n">eventCount</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">,</span> <span class="n">userData</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">eventCount</span><span class="o">.</span><span class="n">addUserInfo</span><span class="o">(</span><span class="n">userData</span><span class="o">)</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span>, <span class="kt">Long</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span> <span class="n">shouldEqual</span> <span class="nc">List</span><span class="o">(</span> <span class="o">(</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">)</span> <span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>or with Specs2</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">import</span> <span class="nn">org.specs2.</span><span class="o">{</span><span class="n">mutable</span> <span class="k">=&gt;</span> <span class="n">mutableSpec</span><span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">SampleJobPipeTransformationsSpec2Spec</span> <span class="k">extends</span> <span class="n">mutableSpec</span><span class="o">.</span><span class="nc">SpecificationWithJUnit</span> <span class="k">with</span> <span class="nc">TupleConversions</span> <span class="k">with</span> <span class="nc">TestInfrastructure</span> <span class="o">{</span>
+
+  <span class="c1">// See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions</span>
+
+  <span class="s">"A sample job pipe transformation"</span> <span class="n">should</span> <span class="o">{</span>
+     <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">EVENT_COUNT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">And</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">USER_DATA_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="o">(</span><span class="n">eventCount</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">,</span> <span class="n">userData</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">eventCount</span><span class="o">.</span><span class="n">addUserInfo</span><span class="o">(</span><span class="n">userData</span><span class="o">)</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span>, <span class="kt">Long</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="s">"add user info"</span> <span class="n">in</span> <span class="o">{</span>
+          <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span> <span class="n">shouldEqual</span> <span class="nc">List</span><span class="o">((</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">))</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Where <code>addUserInfo</code> is a function joining two richPipes to generate an enriched one.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To add the dependency on maven include:</p>
+
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.pragmasoft<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>scalding-unit<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.6<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<p>and repository:</p>
+
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;repository&gt;</span>
+  <span class="nt">&lt;id&gt;</span>conjars.org<span class="nt">&lt;/id&gt;</span>
+  <span class="nt">&lt;url&gt;</span>http://conjars.org/repo<span class="nt">&lt;/url&gt;</span>
+<span class="nt">&lt;/repository&gt;</span>
+</pre></div>
+
+<p>The code is not currently working correctly if you are using Scalding 0.9.rc4.
+The code supporting the 0.9 version is currently in a branch until 0.9 will be GA. To use it include the following dependency:</p>
+
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.pragmasoft<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>scalding-unit<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.5-scalding0.9<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<p>Support for 0.9.rc4 hasn't been updated to version 0.6 yet.</p>
+
+<h2>
+<a name="using-scaldingunit-with-different-versions-of-scala" class="anchor" href="#using-scaldingunit-with-different-versions-of-scala"><span class="octicon octicon-link"></span></a>Using ScaldingUnit with Different Versions of Scala</h2>
+
+<p>ScaldingUnit is built with Scala 2.10 but has been tested with Scala 2.10 and from version 0.5 with 2.9.2.
+Refer to the example directories (examples and examples2.9) to see how to use it with ScalaTest and Specs2.</p>
+
+<p>The explanation below refers to Scala 2.10 code but the changes to apply to use 2.9 are minimal.</p>
+
+<h2>
+<a name="motivation-and-details" class="anchor" href="#motivation-and-details"><span class="octicon octicon-link"></span></a>Motivation and details</h2>
+
+<h2>
+<a name="writing-and-testing-scalding-jobs-without-scaldingunit" class="anchor" href="#writing-and-testing-scalding-jobs-without-scaldingunit"><span class="octicon octicon-link"></span></a>Writing and testing Scalding Jobs without ScaldingUnit</h2>
+
+<p>A Scalding job consists in a series of transformations applied to one or more sources in order to create one or more
+output resources or sinks. A very simple example taken from the Scalding documentations is as follows.</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">package</span> <span class="nn">com.twitter.scalding.examples</span>
+
+<span class="k">import</span> <span class="nn">com.twitter.scalding._</span>
+
+<span class="k">class</span> <span class="nc">WordCountJob</span><span class="o">(</span><span class="n">args</span> <span class="k">:</span> <span class="kt">Args</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Job</span><span class="o">(</span><span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">TextLine</span><span class="o">(</span> <span class="n">args</span><span class="o">(</span><span class="s">"input"</span><span class="o">)</span> <span class="o">)</span>
+     <span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="-Symbol">'line</span> <span class="o">-&gt;</span> <span class="-Symbol">'word</span><span class="o">)</span> <span class="o">{</span> <span class="n">line</span> <span class="k">:</span> <span class="kt">String</span> <span class="o">=&gt;</span> <span class="n">tokenize</span><span class="o">(</span><span class="n">line</span><span class="o">)</span> <span class="o">}</span>
+     <span class="o">.</span><span class="n">groupBy</span><span class="o">(</span><span class="-Symbol">'word</span><span class="o">)</span> <span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">}</span>
+     <span class="o">.</span><span class="n">write</span><span class="o">(</span> <span class="nc">Tsv</span><span class="o">(</span> <span class="n">args</span><span class="o">(</span><span class="s">"output"</span><span class="o">)</span> <span class="o">)</span> <span class="o">)</span>
+
+    <span class="c1">// Split a piece of text into individual words.</span>
+    <span class="k">def</span> <span class="n">tokenize</span><span class="o">(</span><span class="n">text</span> <span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+     <span class="c1">// Lowercase each word and remove punctuation.</span>
+     <span class="n">text</span><span class="o">.</span><span class="n">toLowerCase</span><span class="o">.</span><span class="n">replaceAll</span><span class="o">(</span><span class="s">"[^a-zA-Z0-9\\s]"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="n">split</span><span class="o">(</span><span class="s">"\\s+"</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The transformations are defined as operations on a <code>cascading.pipe.Pipe</code> class or on the richer wrapper <code>com.twitter.scalding.RichPipe</code>.
+Scalding provides a way of testing Jobs via the com.twitter.scalding.JobTest class. This class allows to specify values for the different
+Job sources and to specify assertions on the different job sinks.
+This approach works very well to do end to end test on the Job and is good enough for small jobs as the one described above
+but doesn't encourage modularisation when writing more complex Jobs. That's the reason we started working on ScaldingUnit.</p>
+
+<h2>
+<a name="checking-your-pipes-modular-unit-test-of-your-scalding-job" class="anchor" href="#checking-your-pipes-modular-unit-test-of-your-scalding-job"><span class="octicon octicon-link"></span></a>Checking your Pipes, modular unit test of your Scalding Job</h2>
+
+<p>When the Job logic become more complex it is very helpful to decompose its work in simpler functions to be tested independently before being
+aggregated into the Job.</p>
+
+<p>Let's consider the following Scalding Job (it is still a simple one for reason of space but should give the idea):</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">class</span> <span class="nc">SampleJob</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Args</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Job</span><span class="o">(</span><span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nc">INPUT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'date</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'url</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">WITH_DAY_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'date</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'url</span><span class="o">,</span> <span class="-Symbol">'day</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">EVENT_COUNT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'event_count</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">OUTPUT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'email</span><span class="o">,</span> <span class="-Symbol">'address</span><span class="o">,</span> <span class="-Symbol">'event_count</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="nc">USER_DATA_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'email</span><span class="o">,</span> <span class="-Symbol">'address</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="nc">INPUT_DATE_PATTERN</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"dd/MM/yyyy HH:mm:ss"</span>
+
+  <span class="nc">Osv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"eventsPath"</span><span class="o">)).</span><span class="n">read</span>
+    <span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="-Symbol">'date</span> <span class="o">-&gt;</span> <span class="-Symbol">'day</span><span class="o">)</span> <span class="o">{</span>
+           <span class="n">date</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=&gt;</span> <span class="nc">DateTimeFormat</span><span class="o">.</span><span class="n">forPattern</span><span class="o">(</span><span class="nc">INPUT_DATE_PATTERN</span><span class="o">).</span><span class="n">parseDateTime</span><span class="o">(</span><span class="n">date</span><span class="o">).</span><span class="n">toString</span><span class="o">(</span><span class="s">"yyyy/MM/dd"</span><span class="o">);</span>
+         <span class="o">}</span>
+    <span class="o">.</span><span class="n">groupBy</span><span class="o">((</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">))</span> <span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">size</span><span class="o">(</span><span class="-Symbol">'event_count</span><span class="o">)</span> <span class="o">}</span>
+    <span class="o">.</span><span class="n">joinWithLarger</span><span class="o">(</span><span class="-Symbol">'userid</span> <span class="o">-&gt;</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="nc">Osv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"userInfoPath"</span><span class="o">)).</span><span class="n">read</span><span class="o">).</span><span class="n">project</span><span class="o">(</span><span class="nc">OUTPUT_SCHEMA</span><span class="o">)</span>
+    <span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="nc">Tsv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"outputPath"</span><span class="o">)))</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>It is possible to identify three main operation performed during this task. Each one is providing a identifiable and
+ autonomous transformation to the pipe, just relying on a specific input schema and generating a transformed pipe with a
+ potentially different output schema. Following this idea it is possible to write the Job in this way:</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">import</span> <span class="nn">SampleJobPipeTransformations._</span>
+
+<span class="k">class</span> <span class="nc">SampleJob</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Args</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Job</span><span class="o">(</span><span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+
+  <span class="nc">Osv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"eventsPath"</span><span class="o">)).</span><span class="n">read</span>
+    <span class="o">.</span><span class="n">addDayColumn</span>
+    <span class="o">.</span><span class="n">countUserEventsPerDay</span>
+    <span class="o">.</span><span class="n">addUserInfo</span><span class="o">(</span><span class="nc">Osv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"userInfoPath"</span><span class="o">)).</span><span class="n">read</span><span class="o">)</span>
+    <span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="nc">Tsv</span><span class="o">(</span><span class="n">args</span><span class="o">(</span><span class="s">"outputPath"</span><span class="o">)))</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Where the single operations have been extracted as basic functions into a separate class that is not a Scalding Job:</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">package</span> <span class="nn">object</span> <span class="nc">SampleJobPipeTransformations</span>  <span class="o">{</span>
+
+  <span class="k">val</span> <span class="nc">INPUT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'date</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'url</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">WITH_DAY_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'date</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'url</span><span class="o">,</span> <span class="-Symbol">'day</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">EVENT_COUNT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'event_count</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nc">OUTPUT_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'email</span><span class="o">,</span> <span class="-Symbol">'address</span><span class="o">,</span> <span class="-Symbol">'event_count</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="nc">USER_DATA_SCHEMA</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="-Symbol">'userid</span><span class="o">,</span> <span class="-Symbol">'email</span><span class="o">,</span> <span class="-Symbol">'address</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="nc">INPUT_DATE_PATTERN</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"dd/MM/yyyy HH:mm:ss"</span>
+
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">wrapPipe</span><span class="o">(</span><span class="n">pipe</span><span class="k">:</span> <span class="kt">Pipe</span><span class="o">)</span><span class="k">:</span> <span class="kt">SampleJobPipeTransformationsWrapper</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SampleJobPipeTransformationsWrapper</span><span class="o">(</span><span class="k">new</span> <span class="nc">RichPipe</span><span class="o">(</span><span class="n">pipe</span><span class="o">))</span>
+  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">SampleJobPipeTransformationsWrapper</span><span class="o">(</span><span class="k">val</span> <span class="n">self</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">PipeOperations</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Input schema: INPUT_SCHEMA</span>
+<span class="cm">     * Output schema: WITH_DAY_SCHEMA</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="k">def</span> <span class="n">addDayColumn</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="-Symbol">'date</span> <span class="o">-&gt;</span> <span class="-Symbol">'day</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">date</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=&gt;</span> <span class="nc">DateTimeFormat</span><span class="o">.</span><span class="n">forPattern</span><span class="o">(</span><span class="nc">INPUT_DATE_PATTERN</span><span class="o">).</span><span class="n">parseDateTime</span><span class="o">(</span><span class="n">date</span><span class="o">).</span><span class="n">toString</span><span class="o">(</span><span class="s">"yyyy/MM/dd"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Input schema: WITH_DAY_SCHEMA</span>
+<span class="cm">     * Output schema: EVENT_COUNT_SCHEMA</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="k">def</span> <span class="n">countUserEventsPerDay</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">groupBy</span><span class="o">((</span><span class="-Symbol">'day</span><span class="o">,</span> <span class="-Symbol">'userid</span><span class="o">))</span> <span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">size</span><span class="o">(</span><span class="-Symbol">'event_count</span><span class="o">)</span> <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Joins with userData to add email and address</span>
+<span class="cm">     *</span>
+<span class="cm">     * Input schema: WITH_DAY_SCHEMA</span>
+<span class="cm">     * User data schema: USER_DATA_SCHEMA</span>
+<span class="cm">     * Output schema: OUTPUT_SCHEMA</span>
+<span class="cm">     */</span>
+    <span class="k">def</span> <span class="n">addUserInfo</span><span class="o">(</span><span class="n">userData</span><span class="k">:</span> <span class="kt">Pipe</span><span class="o">)</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">joinWithLarger</span><span class="o">(</span><span class="-Symbol">'userid</span> <span class="o">-&gt;</span> <span class="-Symbol">'userid</span><span class="o">,</span> <span class="n">userData</span><span class="o">).</span><span class="n">project</span><span class="o">(</span><span class="nc">OUTPUT_SCHEMA</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The main Job class is responsible of essentially dealing with the configuration, opening the input and output richPipes and
+combining those macro operations. Using implicit transformations and value classes as shown above is possible to use those
+operations as if they were part of the RichPipe class.</p>
+
+<p>It is now possible to test all this method independently and without caring about the source and sinks of the job and of
+the way the configuration is given.</p>
+
+<p>The specification of the transformation class is shown below:</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">class</span> <span class="nc">SampleJobPipeTransformationsSpec</span> <span class="k">extends</span> <span class="nc">FlatSpec</span> <span class="k">with</span> <span class="nc">ShouldMatchers</span> <span class="k">with</span> <span class="nc">TupleConversions</span> <span class="k">with</span> <span class="nc">TestInfrastructure</span> <span class="o">{</span>
+  <span class="s">"A sample job pipe transformation"</span> <span class="n">should</span> <span class="s">"add column with day of event"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">(</span> <span class="o">(</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">)</span> <span class="o">)</span> <span class="n">withSchema</span> <span class="nc">INPUT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="n">pipe</span><span class="k">:</span> <span class="kt">RichPipe</span> <span class="o">=&gt;</span> <span class="n">pipe</span><span class="o">.</span><span class="n">addDayColumn</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="n">shouldEqual</span> <span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">it</span> <span class="n">should</span> <span class="s">"count user events per day"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">sortedByDateAndIdAsc</span><span class="o">(</span> <span class="n">left</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Long</span><span class="o">,</span> <span class="nc">Long</span><span class="o">),</span> <span class="n">right</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Long</span><span class="o">,</span> <span class="nc">Long</span><span class="o">))</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span>
+      <span class="o">(</span><span class="n">left</span><span class="o">.</span><span class="n">_1</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">.</span><span class="n">_1</span><span class="o">)</span> <span class="o">||</span> <span class="o">((</span><span class="n">left</span><span class="o">.</span><span class="n">_1</span> <span class="o">==</span> <span class="n">right</span><span class="o">.</span><span class="n">_1</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">left</span><span class="o">.</span><span class="n">_2</span> <span class="o">&lt;</span> <span class="n">left</span><span class="o">.</span><span class="n">_2</span><span class="o">))</span>
+
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">(</span>
+          <span class="o">(</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"11/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/11"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"15/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/15"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"15/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000001</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/15"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"15/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000003</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/15"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"15/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000001</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/15"</span><span class="o">),</span>
+          <span class="o">(</span><span class="s">"15/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/15"</span><span class="o">)</span>
+        <span class="o">)</span> <span class="n">withSchema</span> <span class="nc">WITH_DAY_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="n">pipe</span><span class="k">:</span> <span class="kt">RichPipe</span> <span class="o">=&gt;</span> <span class="n">pipe</span><span class="o">.</span><span class="n">countUserEventsPerDay</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">Long</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span><span class="o">.</span><span class="n">sortWith</span><span class="o">(</span><span class="n">sortedByDateAndIdAsc</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">))</span> <span class="n">shouldEqual</span> <span class="nc">List</span><span class="o">(</span>
+                <span class="o">(</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">),</span>
+                <span class="o">(</span><span class="s">"2013/02/12"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">2</span><span class="n">l</span><span class="o">),</span>
+                <span class="o">(</span><span class="s">"2013/02/15"</span><span class="o">,</span> <span class="mi">1000001</span><span class="n">l</span><span class="o">,</span> <span class="mi">2</span><span class="n">l</span><span class="o">),</span>
+                <span class="o">(</span><span class="s">"2013/02/15"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">2</span><span class="n">l</span><span class="o">),</span>
+                <span class="o">(</span><span class="s">"2013/02/15"</span><span class="o">,</span> <span class="mi">1000003</span><span class="n">l</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">)</span>
+              <span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+
+  <span class="n">it</span> <span class="n">should</span> <span class="s">"add user info"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">EVENT_COUNT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">And</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">(</span> <span class="o">(</span><span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">)</span> <span class="o">)</span> <span class="n">withSchema</span> <span class="nc">USER_DATA_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="o">(</span><span class="n">eventCount</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">,</span> <span class="n">userData</span><span class="k">:</span> <span class="kt">RichPipe</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">eventCount</span><span class="o">.</span><span class="n">addUserInfo</span><span class="o">(</span><span class="n">userData</span><span class="o">)</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span>, <span class="kt">Long</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span> <span class="n">shouldEqual</span> <span class="nc">List</span><span class="o">(</span> <span class="o">(</span><span class="s">"2013/02/11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"stefano@email.com"</span><span class="o">,</span> <span class="s">"10 Downing St. London"</span><span class="o">,</span> <span class="mi">1</span><span class="n">l</span><span class="o">)</span> <span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The TestInfrastructure trait is providing a BDD-like syntax to specify the Input to supply to the operation to test and
+to write the expectations on the results (the upper case syntax is caused by the fact that
+the <code>then</code> keyword since it is deprecated from Scala 2.10).</p>
+
+<p>Once the different steps have been tested thoroughly it is possible to combine them in the main Job and test the end to end
+behavior using the JobTest class provided by Scalding.</p>
+
+<h2>
+<a name="testing-in-local-and-hadoop-mode" class="anchor" href="#testing-in-local-and-hadoop-mode"><span class="octicon octicon-link"></span></a>Testing in Local and Hadoop Mode</h2>
+
+<p>Until version 0.5 all tests were executed in Local mode. From version 0.6 is possible to decide if testing in local or
+in Hadoop mode (the runHadoop method in JobTest).</p>
+
+<p>Check the sample code for details but, in summary, mixing-in with the <code>TestInfrastructure</code> trait will cause the test to be
+executed locally as before. Using the trait <code>HadoopTestInfrastructure</code> will run the test on Hadoop.
+If you want to execute selected test on Hadoop or to decide checking some configuration or execution parameter you can
+mix with the <code>MultiTestModeTestInfrastructure</code> and define the test mode in the test method or in the test class as follows:</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">class</span> <span class="nc">SampleJobPipeConfigurableRunModeTransformationsSpec2Spec</span> <span class="k">extends</span> <span class="n">mutableSpec</span><span class="o">.</span><span class="nc">SpecificationWithJUnit</span> <span class="k">with</span> <span class="nc">TupleConversions</span> <span class="k">with</span> <span class="nc">MultiTestModeTestInfrastructure</span> <span class="o">{</span>
+
+  <span class="c1">// See: https://github.com/twitter/scalding/wiki/Frequently-asked-questions</span>
+
+  <span class="k">import</span> <span class="nn">TestRunMode._</span>
+
+  <span class="s">"You can run on hadoop"</span> <span class="n">should</span> <span class="o">{</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="k">_</span> <span class="k">=</span> <span class="n">testOnHadoop</span>
+
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">INPUT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="n">pipe</span><span class="k">:</span> <span class="kt">RichPipe</span> <span class="o">=&gt;</span> <span class="n">pipe</span><span class="o">.</span><span class="n">addDayColumn</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="s">"add column with day of event"</span> <span class="n">in</span> <span class="o">{</span>
+          <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="n">shouldEqual</span> <span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">))</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="s">"You can run locally"</span> <span class="n">should</span> <span class="o">{</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="k">_</span> <span class="k">=</span> <span class="n">testLocally</span>
+
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">INPUT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="n">pipe</span><span class="k">:</span> <span class="kt">RichPipe</span> <span class="o">=&gt;</span> <span class="n">pipe</span><span class="o">.</span><span class="n">addDayColumn</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="s">"add column with day of event"</span> <span class="n">in</span> <span class="o">{</span>
+          <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="n">shouldEqual</span> <span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">))</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="s">"You can run decide using some configuration parameter or randomly"</span> <span class="n">should</span> <span class="o">{</span>
+
+    <span class="k">implicit</span> <span class="k">val</span> <span class="k">_</span> <span class="k">=</span> <span class="k">if</span><span class="o">(</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span> <span class="o">%</span> <span class="mi">2</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">testLocally</span> <span class="k">else</span> <span class="n">testOnHadoop</span>
+
+    <span class="nc">Given</span> <span class="o">{</span>
+      <span class="nc">List</span><span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">))</span> <span class="n">withSchema</span> <span class="nc">INPUT_SCHEMA</span>
+    <span class="o">}</span> <span class="nc">When</span> <span class="o">{</span>
+      <span class="n">pipe</span><span class="k">:</span> <span class="kt">RichPipe</span> <span class="o">=&gt;</span> <span class="n">pipe</span><span class="o">.</span><span class="n">addDayColumn</span>
+    <span class="o">}</span> <span class="nc">Then</span> <span class="o">{</span>
+      <span class="n">buffer</span><span class="k">:</span> <span class="kt">mutable.Buffer</span><span class="o">[(</span><span class="kt">String</span>, <span class="kt">Long</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">)]</span> <span class="k">=&gt;</span>
+        <span class="s">"add column with day of event"</span> <span class="n">in</span> <span class="o">{</span>
+          <span class="n">buffer</span><span class="o">.</span><span class="n">toList</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="n">shouldEqual</span> <span class="o">((</span><span class="s">"12/02/2013 10:22:11"</span><span class="o">,</span> <span class="mi">1000002</span><span class="n">l</span><span class="o">,</span> <span class="s">"http://www.youtube.com"</span><span class="o">,</span> <span class="s">"2013/02/12"</span><span class="o">))</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+</pre></div>
+
+<h2>
+<a name="content" class="anchor" href="#content"><span class="octicon octicon-link"></span></a>Content</h2>
+
+<p>The repository contains two projects:</p>
+
+<ul>
+<li>scalding-unit: the main project, providing the test framework</li>
+<li>examples: a set of examples to describe the design approach described here</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright 2013 PragmaSoft Ltd.</p>
+
+<p>Licensed under the Apache License, Version 2.0: <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+        </section>
+
+        <footer>
+          ScaldingUnit is maintained by <a href="https://github.com/scalding-io">scalding-io</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
